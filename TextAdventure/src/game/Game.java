@@ -8,14 +8,14 @@ public class Game
     private Location freezeA;
     private boolean AttackLogEvent = false; // these are my booleans for whether not certain events have occurred.
     private boolean fixed = false; // fixing time machine
-    
+    private boolean HappyPostosuchusEvent = false; // for when the dangerous animals have calmed down and you are able to progress further.
     private boolean RunState = false; // for when volcano is about to explode
     private Location VolcanoGate;
     private Player player; 
     private int deathWait = 2;
     private Location currentLocation;
-    private boolean EndReady = false; // game's check for if we have a way to get in the volcano or not.
    
+
     private String currentArea;
     private boolean canFreeze = false;
     private CLS cls_var;
@@ -59,7 +59,7 @@ public class Game
         postCliff.SetExit("start location", startingLocation);
         shallowLake.SetExit("forest area", HeavyForest);
         shallowLake.SetExit("start location", startingLocation);
-        VolcanoGate = Volcano;
+        VolcanoGate = HeavyForest;
         CliffTop.SetExit("climb up", postCliff); // weird but functional
         CliffTop.SetExit("use log", HeavyForest);        
         HeavyForest.SetExit("shallow lake", shallowLake);
@@ -314,6 +314,7 @@ public class Game
         Location currentRoom = currentLocation;
         if(canFreeze == false){
             System.out.println("you don't even have your freezegun.");
+            return;
         }	
         if(currentRoom == null || currentRoom.getFreeze() == false && freezeCharge > 0){
             System.out.println("There is nothing of value that needs to be freezed.");
@@ -340,8 +341,13 @@ public class Game
                     freezeCharge -= 1; 
                     break; 
                 case "volcano path":
-                    System.out.println("The volcano slowly freezes over, and seems to calm down... but starts to rumble. GET OUT OF THERE");
-                    RunState = true;
+                	if(player.getItem("PumiceChunk") == null) {
+                		 System.out.println("You are unable to freeze the volcano from that distance. You need to somehow get in the middle.");
+                        
+                		return;
+                	}
+               	 	System.out.println("The volcano slowly freezes over, and seems to calm down... but starts to rumble. GET OUT OF THERE");
+                	RunState = true;
                     freezeCharge -= 1; 
                     break; 
 
@@ -402,7 +408,7 @@ public class Game
             if (item.equals("freezegun")){
                 freezeCharge = 2;
                 System.out.println("freeze gun grabbed and fully charged"); 
-
+                canFreeze = true;
             }
             player.setItem(item, nextItem);
 
