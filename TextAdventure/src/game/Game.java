@@ -15,7 +15,7 @@ public class Game
     private int deathWait = 2;
     private Location currentLocation;
     private boolean EndReady = false; // game's check for if we have a way to get in the volcano or not.
-    private boolean InDanger = false;
+   
     private String currentArea;
     private boolean canFreeze = false;
     private CLS cls_var;
@@ -176,7 +176,9 @@ public class Game
                 deathWait = 2;
 
             }
+                 break;
             case "fix":
+            	System.out.print(currentLocation.getDanger());
                 fix(command);
                 if(deathWait <= 0){
                     try {
@@ -193,6 +195,7 @@ public class Game
                     deathWait = 2;
 
                 }
+
 
                 break;
             case "go":
@@ -273,7 +276,7 @@ public class Game
         } else{
            
 
-            switch(brokenThing) { // the exit is used instead of the actual location leaving some errors possible...
+            switch(brokenThing) { // the item is now is used instead of the actual location leaving some errors possible...
 
                 case "timeMachine":
                 	if(currentArea.equals("start location")) {
@@ -288,13 +291,16 @@ public class Game
 
                     break;  
                 case "PumiceChunk":
-                	if(player.getItem("PumiceChunk")) {
-                		System.out.println("Quickly, you reconnect the battery to the warp drive, and tighten the bolts on the shield generator. Now you can go back when you need to.");
+                	if(player.getItem("PumiceChunk") != null) {
+                		System.out.println("Utilizing the angle grinder, you cut the pumice rock into a large circle that is big enough for you to stand on, but easy enough to carry");
                         fixed = true;
-                                       	}
+                        player.removeItem("PumiceChunk");
+                        Item CarvedPumice = new Item("A carved piece of pumice large enough to stand on", "long description");  
+                       player.setItem("CarvedPumice", CarvedPumice);             
+                	}
                 	 else {
                      	
-                 		System.out.println("you are not near the time machine.");
+                 		System.out.println("You don't have one of those.");
 
                      }
 
@@ -443,8 +449,9 @@ public class Game
             System.out.println("you cannot go there.");
 
         } else{
-            if(RunState = true){
+            if(RunState == true){
                 currentLocation.setDanger(true); // we are running away from the volcano
+                System.out.println("Setting danger...");
             }
             currentLocation = nextRoom;
             if(direction.equals("use log")){
