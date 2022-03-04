@@ -9,17 +9,18 @@ public class Game
     private boolean AttackLogEvent = false; // these are my booleans for whether not certain events have occurred.
     private boolean fixed = false; // fixing time machine
     private boolean HappyPostosuchusEvent = false; // for when the dangerous animals have calmed down and you are able to progress further.
-    private boolean RunState = false; // for when volcano is about to explode
+    private boolean RunState = false; // for when volcano is about to explode. sets a location to dangerous as soon as you enter it.
     private Location VolcanoGate;
     private Player player; 
-    private int deathWait = 2;
+    private int deathWait = 1; // if this reaches zero(usually due to wasted commands), you will die.
     private Location currentLocation;
-   
-
+    private Location feedLocation; // helps with displaying certain locked things correctly
+    private Location endLocation; // where to end the game
     private String currentArea;
     private boolean canFreeze = false;
     private CLS cls_var;
-    private int freezeCharge = 0;
+    private int freezeCharge = 0; // charge of the freeze ray. you have 2 charges that can be used on 4 different targets.
+    private boolean gaming = true; // determines if we are playing or not
     public Game()
     {
         parser = new Parcer();
@@ -39,6 +40,11 @@ public class Game
         System.out.println(player.getInventoryString());
 
         System.out.println("freeze gun charge: " + freezeCharge);
+        
+        if(currentLocation.getDanger() == true) {
+        	System.out.println("Commands until death(not including movement) = " + deathWait);
+        }
+        
     }
 
     public void setUpGame() {
@@ -64,7 +70,10 @@ public class Game
         CliffTop.SetExit("use log", HeavyForest);        
         HeavyForest.SetExit("shallow lake", shallowLake);
         currentLocation = startingLocation;
+        feedLocation = postCliff;
+        endLocation = startingLocation;
         HeavyForest.SetExit("volcano path", Volcano);
+        Volcano.SetExit("volcano path", HeavyForest);
         shallowLake.setItem("lystrosaurus", lystrosaurus);
         postCliff.setItem("freezegun", freezeGun);
         postCliff.setItem("PumiceChunk", rockDepositChunk);
@@ -81,9 +90,21 @@ public class Game
     }
 
     public void play(){
+    	System.out.println("Welcome to..");
+    	System.out.print("\r\n"
+    			+ "   _____                                  _                       \r\n"
+    			+ "  / ____|                                | |                      \r\n"
+    			+ " | (___  _   _ _ __   ___ _ ____   _____ | | ___ __ _ _ __   ___  \r\n"
+    			+ "  \\___ \\| | | | '_ \\ / _ \\ '__\\ \\ / / _ \\| |/ __/ _` | '_ \\ / _ \\ \r\n"
+    			+ "  ____) | |_| | |_) |  __/ |   \\ V / (_) | | (_| (_| | | | | (_) |\r\n"
+    			+ " |_____/ \\__,_| .__/ \\___|_|    \\_/ \\___/|_|\\___\\__,_|_| |_|\\___/ \r\n"
+    			+ "              | |                                                 \r\n"
+    			+ "              |_|                                                 \r\n"
+    			+ "");
+    	System.out.println("Ok so the year is 2050 and a supervolcano is on the brink of erupting. luckily the government has a time machine, so they sent you back in time to destroy the volcano. HOWEVER, the time period is the Trissaic period, a strange time after trilobites but before dinosaurs.");
         System.out.println("Note: some items work differently in this game. Simply type a action the item will use, and it will do whatever task was needed for the room.");
         System.out.println("Also, you die in this game by remaning in a dangerous area for more then 2 commands. It resets when you leave.");
-        while(true){
+        while(gaming == true){
 
             Command command = parser.getCommand();
             try {
@@ -177,6 +198,10 @@ public class Game
 
             }
                  break;
+            case "help":
+                help(command);
+        
+                 break;
             case "fix":
             	System.out.print(currentLocation.getDanger());
                 fix(command);
@@ -196,6 +221,35 @@ public class Game
 
                 }
 
+
+                break;
+            case "warp":
+            	if(currentLocation == endLocation && fixed == true && RunState == true) {
+            		deathWait = 999;
+            		System.out.println("warping away now!");
+            		System.out.println("........");
+            		System.out.println("Mission accomplished! You were able to freeze the volcano and cause it to erupt prematurely.");
+            		gaming = false;
+            	} else {
+            		
+            		System.out.println("Warp failed. Try fixing your time machine or being in the same location as it.");
+            	}
+            	if(deathWait <= 0){
+                    try {
+                        cls_var.main(); 
+                    }catch(Exception e) {
+                        System.out.println(e); 
+                    }
+                    System.out.println("Unfortunately you died, probably because you didn't notice the aggresive creature right next to you. Restart the game.");                
+                }
+                else if(currentLocation.getDanger() == true){
+                    System.out.println("You are in a lot of danger here. Either solve the problem or leave.");
+                    deathWait -= 1;
+                }   else{
+                    deathWait = 2;
+
+                }
+            		
 
                 break;
             case "go":
@@ -268,7 +322,7 @@ public class Game
          Location currentRoom = currentLocation;
          String brokenThing = command.getSecWord();
 
-        if(brokenThing == null || fixed == true){
+        if(brokenThing == null){
             System.out.println("fix what idiot");
             if(player.getItem("toolbox") == null){
                 System.out.println("futhermore, you don't even have your toolbox.");
@@ -279,21 +333,24 @@ public class Game
             switch(brokenThing) { // the item is now is used instead of the actual location leaving some errors possible...
 
                 case "timeMachine":
-                	if(currentArea.equals("start location")) {
-                		System.out.println("Quickly, you reconnect the battery to the warp drive, and tighten the bolts on the shield generator. Now you can go back when you need to.");
-                        fixed = true;
-                                       	}
-                	 else {
-                     	
-                 		System.out.println("you are not near the time machine.");
+                	if(fixed == false) {
+                		if(currentArea.equals("start location")) {
+                    		System.out.println("Quickly, you reconnect the battery to the warp drive, and tighten the bolts on the shield generator. Now you can go back when you need to.");
+                            fixed = true;
+                                           	}
+                    	 else {
+                         	
+                     		System.out.println("you are not near the time machine.");
 
-                     }
+                         }
+                	}
+                	
 
                     break;  
                 case "PumiceChunk":
                 	if(player.getItem("PumiceChunk") != null) {
                 		System.out.println("Utilizing the angle grinder, you cut the pumice rock into a large circle that is big enough for you to stand on, but easy enough to carry");
-                        fixed = true;
+                      
                         player.removeItem("PumiceChunk");
                         Item CarvedPumice = new Item("A carved piece of pumice large enough to stand on", "long description");  
                        player.setItem("CarvedPumice", CarvedPumice);             
@@ -341,7 +398,7 @@ public class Game
                     freezeCharge -= 1; 
                     break; 
                 case "volcano path":
-                	if(player.getItem("PumiceChunk") == null) {
+                	if(player.getItem("CarvedPumice") == null) {
                 		 System.out.println("You are unable to freeze the volcano from that distance. You need to somehow get in the middle.");
                         
                 		return;
@@ -370,12 +427,13 @@ public class Game
                     break;  
                 case "shallow lake":
                     System.out.println("You can't feed a lystrosaurus lystrosaurus!");
-                    freezeCharge -= 1;     
-
+                    
                     break;
                 case "cliff edge":
+                	HappyPostosuchusEvent = true;
                     System.out.println("you put the lystrosaurus down and within secounds the postosuchuses tear it to shreds. you are not only a terrible person, but you have also made the postosuchuses calm down.");
                     player.removeItem("lystrosaurus");  
+                    currentLocation.setDanger(false);
                     break;   
                 case "climb up":
                     System.out.println("Cheater.");
@@ -393,7 +451,37 @@ public class Game
             }
         }
     }
+    public void help(Command command){
+        Location currentRoom = currentLocation;
+        switch(currentArea) { // the exit is used instead of the actual location leaving some errors possible...
 
+        case "start location":
+            System.out.println("Don't freeze your time machine..");
+            break;  
+        case "shallow lake":
+            System.out.println("With a quick blast, the lake is frozen over. You probably just wasted a shot.");
+            freezeCharge -= 1;     
+            break;
+        case "cliff edge":
+            System.out.println("you point it straight at the postosuchus, but hold off when you realize that there are 5 others.");
+
+            break;   
+        case "climb up":
+            System.out.println("You shoot the tree. It freezes and slowly tips over, creating a log bridge.");
+            freezeCharge -= 1; 
+            break; 
+        case "volcano path":
+        	if(player.getItem("CarvedPumice") == null) {
+        		 System.out.println("You are unable to freeze the volcano from that distance. You need to somehow get in the middle.");
+                
+        		return;
+        	}
+       	 	System.out.println("The volcano slowly freezes over, and seems to calm down... but starts to rumble. GET OUT OF THERE");
+        	RunState = true;
+            freezeCharge -= 1; 
+            break; 
+            }
+    }
     public void grab(Command command){
         if(!command.ifsecWord()){
             System.out.println("specify what to grab");
@@ -415,6 +503,8 @@ public class Game
             printInformation();
         }
 
+        
+        
     }
 
     public void drop(Command command){
@@ -451,6 +541,10 @@ public class Game
             nextRoom = null;    
             System.out.print("That is blocked by a heavy log.");
         }
+         if(direction.equals("climb up") && currentLocation == feedLocation && HappyPostosuchusEvent == false){
+             nextRoom = null;    
+             System.out.print("It's too dangerous to climb up.");
+         }
         if(nextRoom == null){
             System.out.println("you cannot go there.");
 
@@ -460,6 +554,7 @@ public class Game
                 System.out.println("Setting danger...");
             }
             currentLocation = nextRoom;
+            deathWait = 1;
             if(direction.equals("use log")){
                 AttackLogEvent = true;
                 System.out.println("Before you go across the log, a ton of the postosuchuses storm across the log you created. A loud noise also is heard from directly ahead.");
