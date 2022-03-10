@@ -7,18 +7,18 @@ public class Game
     private Parcer parser;
     private Location freezeA;
     private boolean AttackLogEvent = false; // these are my booleans for whether not certain events have occurred.
-    private boolean fixed = false; // fixing time machine
+    private boolean Timefixed = false; // fixing time machine
     private boolean HappyPostosuchusEvent = false; // for when the dangerous animals have calmed down and you are able to progress further.
     private boolean RunState = false; // for when volcano is about to explode. sets a location to dangerous as soon as you enter it.
-    private Location VolcanoGate;
-    private Player player; 
-    private int deathWait = 1; // if this reaches zero(usually due to wasted commands), you will die.
-    private Location currentLocation;
+    private Location VolcanoGate; // the other locked door.
+    private Player player; // you
+    private int deathWait = 2; // if this reaches zero(usually due to wasted commands), you will die.
+    private Location currentLocation; // very important variable that tells us the current location.
     private Location feedLocation; // helps with displaying certain locked things correctly
     private Location endLocation; // where to end the game
-    private String currentArea;
-    private boolean canFreeze = false;
-    private CLS cls_var;
+    private String currentArea; // current area, via exit string
+    private boolean canFreeze = false; // whether or not we have a freeze gun
+    private CLS cls_var; // copied stuff
     private int freezeCharge = 0; // charge of the freeze ray. you have 2 charges that can be used on 4 different targets.
     private boolean gaming = true; // determines if we are playing or not
     public Game()
@@ -38,8 +38,10 @@ public class Game
         System.out.println(currentLocation.getShortDescription());
         System.out.println(currentLocation.getInventoryString());
         System.out.println(player.getInventoryString());
-
-        System.out.println("freeze gun charge: " + freezeCharge);
+        if(canFreeze == true){
+        	System.out.println("freeze gun charge: " + freezeCharge);
+        }
+        
         
         if(currentLocation.getDanger() == true) {
         	System.out.println("Commands until death(not including movement) = " + deathWait);
@@ -57,8 +59,8 @@ public class Game
         Location HeavyForest = new Location(" This is a small clearing, with a giant tree log blocking the path to the volcano. A lisowacia is also there, but sleeping.", "e", false, false);
         Item freezeGun = new Item("your freeze gun", "long description");   
         Item rockDepositChunk = new Item("large chunk of pumice rock that floats.", "long description");   
-        Item tools = new Item("a toolbox", "long description");
-        Item lystrosaurus = new Item("the lystrosaurus you grabbed", "long description");  
+        Item tools = new Item("a toolbox", "red toolbox with lots of cool stuff.");
+        Item lystrosaurus = new Item("the lystrosaurus you grabbed", "A small animal from the Trissaic period. It was one of the only animals to survive the Permian extinction.");  
         startingLocation.SetExit("shallow lake", shallowLake);
         startingLocation.SetExit("cliff edge", postCliff);
         postCliff.SetExit("climb up", CliffTop);
@@ -76,7 +78,7 @@ public class Game
         Volcano.SetExit("volcano path", HeavyForest);
         shallowLake.setItem("lystrosaurus", lystrosaurus);
         postCliff.setItem("freezegun", freezeGun);
-        postCliff.setItem("PumiceChunk", rockDepositChunk);
+        HeavyForest.setItem("PumiceChunk", rockDepositChunk);
         postCliff.setItem("toolbox", tools);
         currentArea = "start location";
         freezeA = CliffTop;
@@ -85,8 +87,9 @@ public class Game
         }catch(Exception e) {
             System.out.println(e); 
         }
-        printInformation();
+       
         play();
+      
     }
 
     public void play(){
@@ -102,8 +105,9 @@ public class Game
     			+ "              |_|                                                 \r\n"
     			+ "");
     	System.out.println("Ok so the year is 2050 and a supervolcano is on the brink of erupting. luckily the government has a time machine, so they sent you back in time to destroy the volcano. HOWEVER, the time period is the Trissaic period, a strange time after trilobites but before dinosaurs.");
-        System.out.println("Note: some items work differently in this game. Simply type a action the item will use, and it will do whatever task was needed for the room.");
-        System.out.println("Also, you die in this game by remaning in a dangerous area for more then 2 commands. It resets when you leave.");
+        System.out.println("Note: some items(freeze, food) work differently in this game. Simply type a action the item will use, and it will do whatever task was needed for the room.");
+        System.out.println("Also, you die in this game by remaning in a dangerous area for more then 2 commands. It resets when you leave. Now onto the game.");
+        printInformation();
         while(gaming == true){
 
             Command command = parser.getCommand();
@@ -114,6 +118,7 @@ public class Game
             }
             processCommand(command);
         }
+        return;
 
     }
 
@@ -129,7 +134,8 @@ public class Game
                 }catch(Exception e) {
                     System.out.println(e); 
                 }
-                System.out.println("Unfortunately you died, probably because you didn't notice the aggresive creature right next to you. Restart the game.");                
+                System.out.println("Unfortunately you died, probably because you didn't notice the aggresive creature right next to you. Restart the game.");     
+                gaming = false;
             }
             else if(currentLocation.getDanger() == true){
                 System.out.println("You are in a lot of danger here. Either solve the problem or leave.");
@@ -149,7 +155,8 @@ public class Game
                 }catch(Exception e) {
                     System.out.println(e); 
                 }
-                System.out.println("Unfortunately you died, probably because you didn't notice the aggresive creature right next to you. Restart the game.");                
+                System.out.println("Unfortunately you died, probably because you didn't notice the aggresive creature right next to you. Restart the game.");        
+                gaming = false;
             }
             else if(currentLocation.getDanger() == true){
                 System.out.println("You are in a lot of danger here. Either solve the problem or leave.");
@@ -169,7 +176,8 @@ public class Game
                 }catch(Exception e) {
                     System.out.println(e); 
                 }
-                System.out.println("Unfortunately you died, probably because you didn't notice the aggresive creature right next to you. Restart the game.");                
+                System.out.println("Unfortunately you died, probably because you didn't notice the aggresive creature right next to you. Restart the game.");     
+                gaming = false;
             }
             else if(currentLocation.getDanger() == true){
                 System.out.println("You are in a lot of danger here. Either solve the problem or leave.");
@@ -188,7 +196,8 @@ public class Game
                 }catch(Exception e) {
                     System.out.println(e); 
                 }
-                System.out.println("Unfortunately you died, probably because you didn't notice the aggresive creature right next to you. Restart the game.");                
+                System.out.println("Unfortunately you died, probably because you didn't notice the aggresive creature right next to you. Restart the game.");         
+                gaming = false;
             }
             else if(currentLocation.getDanger() == true){
                 System.out.println("You are in a lot of danger here. Either solve the problem or leave.");
@@ -200,7 +209,7 @@ public class Game
                  break;
             case "help":
                 help(command);
-        
+                
                  break;
             case "fix":
             	System.out.print(currentLocation.getDanger());
@@ -211,7 +220,8 @@ public class Game
                     }catch(Exception e) {
                         System.out.println(e); 
                     }
-                    System.out.println("Unfortunately you died, probably because you didn't notice the aggresive creature right next to you. Restart the game.");                
+                    System.out.println("Unfortunately you died, probably because you didn't notice the aggresive creature right next to you. Restart the game.");  
+                    gaming = false;
                 }
                 else if(currentLocation.getDanger() == true){
                     System.out.println("You are in a lot of danger here. Either solve the problem or leave.");
@@ -224,7 +234,7 @@ public class Game
 
                 break;
             case "warp":
-            	if(currentLocation == endLocation && fixed == true && RunState == true) {
+            	if(currentLocation == endLocation && Timefixed == true && RunState == true) {
             		deathWait = 999;
             		System.out.println("warping away now!");
             		System.out.println("........");
@@ -240,7 +250,8 @@ public class Game
                     }catch(Exception e) {
                         System.out.println(e); 
                     }
-                    System.out.println("Unfortunately you died, probably because you didn't notice the aggresive creature right next to you. Restart the game.");                
+                    System.out.println("Unfortunately you died, probably because you didn't notice the aggresive creature right next to you. Restart the game.");           
+                    gaming = false;
                 }
                 else if(currentLocation.getDanger() == true){
                     System.out.println("You are in a lot of danger here. Either solve the problem or leave.");
@@ -254,8 +265,7 @@ public class Game
                 break;
             case "go":
                 goRoom(command);
-                break;
-           
+            	
             case "inv":
                 player.getInventoryString();
                  if(deathWait <= 0){
@@ -264,7 +274,8 @@ public class Game
                 }catch(Exception e) {
                     System.out.println(e); 
                 }
-                System.out.println("Unfortunately you died, probably because you didn't notice the aggresive creature right next to you. Restart the game.");                
+                System.out.println("Unfortunately you died, probably because you didn't notice the aggresive creature right next to you. Restart the game.");          
+                gaming = false;
             }
             else if(currentLocation.getDanger() == true){
                 System.out.println("You are in a lot of danger here. Either solve the problem or leave.");
@@ -283,7 +294,8 @@ public class Game
                 }catch(Exception e) {
                     System.out.println(e); 
                 }
-                System.out.println("Unfortunately you died, probably because you didn't notice the aggresive creature right next to you. Restart the game.");                
+                System.out.println("Unfortunately you died, probably because you didn't notice the aggresive creature right next to you. Restart the game.");      
+                gaming = false;
             }
             else if(currentLocation.getDanger() == true){
                 System.out.println("You are in a lot of danger here. Either solve the problem or leave.");
@@ -302,7 +314,8 @@ public class Game
                 }catch(Exception e) {
                     System.out.println(e); 
                 }
-                System.out.println("Unfortunately you died, probably because you didn't notice the aggresive creature right next to you. Restart the game.");                
+                System.out.println("Unfortunately you died, probably because you didn't notice the aggresive creature right next to you. Restart the game.");            
+                gaming = false;
             }
             else if(currentLocation.getDanger() == true){
                 System.out.println("You are in a lot of danger here. Either solve the problem or leave.");
@@ -333,10 +346,10 @@ public class Game
             switch(brokenThing) { // the item is now is used instead of the actual location leaving some errors possible...
 
                 case "timeMachine":
-                	if(fixed == false) {
+                	if(Timefixed == false) {
                 		if(currentArea.equals("start location")) {
                     		System.out.println("Quickly, you reconnect the battery to the warp drive, and tighten the bolts on the shield generator. Now you can go back when you need to.");
-                            fixed = true;
+                    		Timefixed = true;
                                            	}
                     	 else {
                          	
@@ -413,7 +426,6 @@ public class Game
     }
 
     public void feed(){
-        Location currentRoom = currentLocation;
         if(player.getItem("lystrosaurus") == null)
         {
             System.out.println("You don't have something for a animal to eat.");
@@ -447,40 +459,71 @@ public class Game
                     System.out.println("That giant thing is a herbivore idiot");
                     player.removeItem("lystrosaurus");  
                     break; 
+                
+              
+                	
 
             }
+            
         }
     }
     public void help(Command command){
-        Location currentRoom = currentLocation;
-        switch(currentArea) { // the exit is used instead of the actual location leaving some errors possible...
+        
+        
+        String subject = command.getSecWord();
+        if(subject == null) {
+    		System.out.println("help with what? (try the word danger or items).");
 
-        case "start location":
-            System.out.println("Don't freeze your time machine..");
-            break;  
-        case "shallow lake":
-            System.out.println("With a quick blast, the lake is frozen over. You probably just wasted a shot.");
-            freezeCharge -= 1;     
-            break;
-        case "cliff edge":
-            System.out.println("you point it straight at the postosuchus, but hold off when you realize that there are 5 others.");
+    		System.out.println("hint: use the word go to go to another location(the location is always 2 words). Most other commands are what you would expect(fix for toolbox, freeze for freezegun, feed for the lystro)");
 
-            break;   
-        case "climb up":
-            System.out.println("You shoot the tree. It freezes and slowly tips over, creating a log bridge.");
-            freezeCharge -= 1; 
-            break; 
-        case "volcano path":
-        	if(player.getItem("CarvedPumice") == null) {
-        		 System.out.println("You are unable to freeze the volcano from that distance. You need to somehow get in the middle.");
+        }
+        else {
+        	switch(subject) {
+        	case "danger":
+        		System.out.println("There is a way to avoid all the dangerous objects in the game. You die after wasting more then 3 turns in a room.");
+                break;  
+        	case "items":
+        		System.out.println("4 items exist in this game. You need all of them to win.");
+                break;  
+        	case "toolbox":
+        		System.out.println("This can fix anything, but it could probably shape something as well.");
+                break; 
+        	case "freezegun":
+        		System.out.println("A freeze gun of this type causes frozen objects to lose their tensile strength.");
+                break; 
+        	case "location":
+        		switch(currentArea) { // the exit is used instead of the actual location leaving some errors possible...
+
+                case "start location":
+                    System.out.println("You can go back home once you fixed your time machine.");
+                    break;  
+                case "shallow lake":
+                    System.out.println("Those small lizards look like they would be food for any large animal.");
+                    freezeCharge -= 1;     
+                    break;
+                case "cliff edge":
+                    System.out.println("Like all animals, these postosuchuses near the cliff are angry when they are hungry.");
+
+                    break;   
+                case "climb up":
+                    System.out.println("The tree is old enough that a rapid change of energy could knock it down.");
+                    freezeCharge -= 1; 
+                    break; 
+                case "volcano path":
+                	
+               	 	System.out.println("To be able to freeze the volcano, you need to be in the center of the volcano. Most floatation devices burn, but is there a sort of floating rock you can use?");
+                	
+                    break; 
                 
-        		return;
-        	}
-       	 	System.out.println("The volcano slowly freezes over, and seems to calm down... but starts to rumble. GET OUT OF THERE");
-        	RunState = true;
-            freezeCharge -= 1; 
-            break; 
+                
+                default:
+                  	 
+                	System.out.println("I do not know what this is, and cannot help you with it.");
+               	 break;
+        		}
             }
+        }
+        
     }
     public void grab(Command command){
         if(!command.ifsecWord()){
@@ -503,7 +546,6 @@ public class Game
             printInformation();
         }
 
-        
         
     }
 
@@ -529,36 +571,53 @@ public class Game
             System.out.println("go WHERE?!");
         }
         String direction = command.getSecWord()+command.getline();
-        currentArea = command.getSecWord() + "" + command.getline();
+       
 
         Location nextRoom = currentLocation.getExit(direction);
 
         if(direction.equals("use log") && currentLocation == freezeA && currentLocation.getFreeze() == true){
-            nextRoom = null;    
-            System.out.print("The log is standing tall, and jumping would not work. Needless to say, ");
+        	nextRoom = currentLocation;  
+            System.out.print("The log is standing tall, and jumping would not work. Needless to say, you can't go there.");
+           
         }
-         if(direction.equals("volcano path") && currentLocation == VolcanoGate && AttackLogEvent == false){
-            nextRoom = null;    
+        else if(direction.equals("volcano path") && currentLocation == VolcanoGate && AttackLogEvent == false){
+        	nextRoom = currentLocation;   
             System.out.print("That is blocked by a heavy log.");
+            
         }
-         if(direction.equals("climb up") && currentLocation == feedLocation && HappyPostosuchusEvent == false){
-             nextRoom = null;    
+        else if(direction.equals("climb up") && currentLocation == feedLocation && HappyPostosuchusEvent == false){
+             nextRoom = currentLocation;    
              System.out.print("It's too dangerous to climb up.");
+             deathWait -= 1;
+             System.out.println(deathWait);
+             if(deathWait <= 0){
+                 try {
+                     cls_var.main(); 
+                 }catch(Exception e) {
+                     System.out.println(e); 
+                 }
+                 System.out.println("Unfortunately you died, probably because you didn't notice the aggresive creature right next to you. Restart the game.");            
+                 gaming = false;
+             }
          }
-        if(nextRoom == null){
+        else if(nextRoom == null){
             System.out.println("you cannot go there.");
-
+            nextRoom = currentLocation; 
+            
         } else{
             if(RunState == true){
                 currentLocation.setDanger(true); // we are running away from the volcano
-                System.out.println("Setting danger...");
+                System.out.println("Keep running, the lava is right behind you!");
+                
             }
+            currentArea = command.getSecWord() + "" + command.getline();
             currentLocation = nextRoom;
-            deathWait = 1;
-            if(direction.equals("use log")){
+            deathWait = 2;
+            if(direction.equals("use log") || (direction.equals("forest area") && AttackLogEvent == true)){
                 AttackLogEvent = true;
                 System.out.println("Before you go across the log, a ton of the postosuchuses storm across the log you created. A loud noise also is heard from directly ahead.");
                 currentLocation.setShortDescription("This is crazy town, as there are postosuchuses attacking the lisowacia as a group. In the chaos, the large log blocking the volcano has been removed.");
+                currentLocation.setDanger(true);
             }
             printInformation();
         }
