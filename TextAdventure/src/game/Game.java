@@ -42,7 +42,6 @@ public class Game
         	System.out.println("freeze gun charge: " + freezeCharge);
         }
         
-        
         if(currentLocation.getDanger() == true) {
         	System.out.println("Commands until death(not including movement) = " + deathWait);
         }
@@ -104,9 +103,9 @@ public class Game
     			+ "              | |                                                 \r\n"
     			+ "              |_|                                                 \r\n"
     			+ "");
-    	System.out.println("Ok so the year is 2050 and a supervolcano is on the brink of erupting. luckily the government has a time machine, so they sent you back in time to destroy the volcano. HOWEVER, the time period is the Trissaic period, a strange time after trilobites but before dinosaurs.");
-        System.out.println("Note: some items(freeze, food) work differently in this game. Simply type a action the item will use, and it will do whatever task was needed for the room.");
-        System.out.println("Also, you die in this game by remaning in a dangerous area for more then 2 commands. It resets when you leave. Now onto the game.");
+    	System.out.println("Ok so the year is 2050 and a supervolcano is on the brink of erupting. luckily the government has a time machine, so they sent you back in time to destroy the volcano. HOWEVER, the time period is the Trissaic period, a strange time after trilobites and giant bugs but before dinosaurs.");
+        System.out.println("Note: some items(freezegun) work differently in this game. Simply type a action the item will use, and it will do whatever task was needed for the room.");
+        System.out.println("Also, you die in this game by remaning in a dangerous area for more then 2 commands(including typos). It resets when you leave. Now onto the game.");
         printInformation();
         while(gaming == true){
 
@@ -124,7 +123,9 @@ public class Game
 
     public void processCommand(Command command){
         String commandWord = command.getCommandWord().toLowerCase();
-        switch(commandWord) {
+        if(commandWord != null && command.getCommandWord() != null) {
+        	
+        	switch(commandWord) {
 
             case "speak":
                 System.out.println("you wanted me to say this word: " + command.getSecWord());
@@ -189,7 +190,7 @@ public class Game
 
                 break;
             case "feed":
-                feed();
+                feed(command);
                  if(deathWait <= 0){
                 try {
                     cls_var.main(); 
@@ -233,6 +234,8 @@ public class Game
 
 
                 break;
+       
+        
             case "warp":
             	if(currentLocation == endLocation && Timefixed == true && RunState == true) {
             		deathWait = 999;
@@ -327,6 +330,11 @@ public class Game
 
             break;
 
+            default:
+             	 
+            	System.out.println("Not a recognized command.");
+           	 break;
+        	}
         }
        
     }
@@ -425,48 +433,46 @@ public class Game
         }
     }
 
-    public void feed(){
-        if(player.getItem("lystrosaurus") == null)
-        {
+    public void feed(Command command){
+    	   String hungryThing = command.getSecWord();
+
+           if(hungryThing == null){
+               System.out.println("feed what");
+           }
+               else if(player.getItem("lystrosaurus") == null)
+               {
+            	   
             System.out.println("You don't have something for a animal to eat.");
         } else{
+        	
+            
+            switch(hungryThing) {// the exit is used instead of the actual location leaving some errors possible...
 
-            printInformation();
-            switch(currentArea) {// the exit is used instead of the actual location leaving some errors possible...
-
-                case "start location":
-                    System.out.println("Nothing looks hungry here.");
+                case "postosuchus":
+                	if(currentArea.equals("cliff edge") && HappyPostosuchusEvent == false) {
+                		 System.out.println("you feed the postosuchuses. they are happy now");
+                		 HappyPostosuchusEvent = true;
+                		 player.removeItem("lystrosaurus");
+                		 currentLocation.setDanger(false);	
+                		 deathWait = 2;
+                	}
                     break;  
-                case "shallow lake":
-                    System.out.println("You can't feed a lystrosaurus lystrosaurus!");
-                    
-                    break;
-                case "cliff edge":
-                	HappyPostosuchusEvent = true;
-                    System.out.println("you put the lystrosaurus down and within secounds the postosuchuses tear it to shreds. you are not only a terrible person, but you have also made the postosuchuses calm down.");
-                    player.removeItem("lystrosaurus");  
-                    currentLocation.setDanger(false);
-                    break;   
-                case "climb up":
-                    System.out.println("Cheater.");
-                    player.removeItem("lystrosaurus");  
-                    break; 
-                case "volcano path":
-                    System.out.println("Cheater.");
-                    player.removeItem("lystrosaurus");  
-                    break; 
-                case "forest area":
-                    System.out.println("That giant thing is a herbivore idiot");
-                    player.removeItem("lystrosaurus");  
-                    break; 
-                
+                case "lystrosaurus":
+                	System.out.println("bruh");
+                	System.out.println("bruh");
+                    break;  
+                default:
+                	 System.out.println("Cant feed that.");
+                	break;
               
                 	
 
             }
+        }
+        
             
         }
-    }
+    
     public void help(Command command){
         
         
@@ -479,6 +485,9 @@ public class Game
         }
         else {
         	switch(subject) {
+        	case "cmds":
+        		System.out.println("feed, freeze, go, help, grab, drop(not going to be used), help, warp, fix");
+                break; 
         	case "danger":
         		System.out.println("There is a way to avoid all the dangerous objects in the game. You die after wasting more then 3 turns in a room.");
                 break;  
