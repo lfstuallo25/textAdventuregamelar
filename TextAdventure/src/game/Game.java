@@ -92,21 +92,26 @@ public class Game
     }
 
     public void play(){
-    	System.out.println("Welcome to..");
-    	System.out.print("\r\n"
-    			+ "   _____                                  _                       \r\n"
-    			+ "  / ____|                                | |                      \r\n"
-    			+ " | (___  _   _ _ __   ___ _ ____   _____ | | ___ __ _ _ __   ___  \r\n"
-    			+ "  \\___ \\| | | | '_ \\ / _ \\ '__\\ \\ / / _ \\| |/ __/ _` | '_ \\ / _ \\ \r\n"
-    			+ "  ____) | |_| | |_) |  __/ |   \\ V / (_) | | (_| (_| | | | | (_) |\r\n"
-    			+ " |_____/ \\__,_| .__/ \\___|_|    \\_/ \\___/|_|\\___\\__,_|_| |_|\\___/ \r\n"
-    			+ "              | |                                                 \r\n"
-    			+ "              |_|                                                 \r\n"
-    			+ "");
-    	System.out.println("Ok so the year is 2050 and a supervolcano is on the brink of erupting. luckily the government has a time machine, so they sent you back in time to destroy the volcano. HOWEVER, the time period is the Trissaic period, a strange time after trilobites and giant bugs but before dinosaurs.");
-        System.out.println("Note: some items(freezegun) work differently in this game. Simply type a action the item will use, and it will do whatever task was needed for the room.");
-        System.out.println("Also, you die in this game by remaning in a dangerous area for more then 2 commands(including typos). It resets when you leave. Now onto the game.");
-        printInformation();
+    	if(gaming == true) {
+    		System.out.println("Welcome to..");
+        	System.out.print("\r\n"
+        			+ "   _____                                  _                       \r\n"
+        			+ "  / ____|                                | |                      \r\n"
+        			+ " | (___  _   _ _ __   ___ _ ____   _____ | | ___ __ _ _ __   ___  \r\n"
+        			+ "  \\___ \\| | | | '_ \\ / _ \\ '__\\ \\ / / _ \\| |/ __/ _` | '_ \\ / _ \\ \r\n"
+        			+ "  ____) | |_| | |_) |  __/ |   \\ V / (_) | | (_| (_| | | | | (_) |\r\n"
+        			+ " |_____/ \\__,_| .__/ \\___|_|    \\_/ \\___/|_|\\___\\__,_|_| |_|\\___/ \r\n"
+        			+ "              | |                                                 \r\n"
+        			+ "              |_|                                                 \r\n"
+        			+ "");
+        	System.out.println("Ok so the year is 2050 and a supervolcano is on the brink of erupting. luckily the government has a time machine, so they sent you back in time to destroy the volcano. HOWEVER, the time period is the Trissaic period, a strange time after trilobites and giant bugs but before dinosaurs.");
+            System.out.println("Note: some items(freezegun) work differently in this game. Simply type a action the item will use, and it will do whatever task was needed for the room.");
+            
+            System.out.println("Also, you die in this game by remaning in a dangerous area for more then 2 commands(including typos). It resets when you leave. Now onto the game.");
+            printInformation();
+    		
+    	}
+    
         while(gaming == true){
 
             Command command = parser.getCommand();
@@ -187,8 +192,26 @@ public class Game
                 deathWait = 2;
 
             }
-
+                 
                 break;
+            case "larsenssecretdebugcommand":
+            	
+            	System.out.println("debug activated");
+            	deathWait = 999;
+        		System.out.println("warping away now!");
+        		System.out.println("........");
+        		System.out.println("Mission accomplished! You were able to freeze the volcano and cause it to erupt prematurely.");
+        		gaming = false;
+            	break;
+            case "larsenssecretdeathdebugcommand":
+            	   try {
+                       cls_var.main(); 
+                   }catch(Exception e) {
+                       System.out.println(e); 
+                   }
+                   System.out.println("you died because you are debugging the game.");         
+                   gaming = false;
+            	break;
             case "feed":
                 feed(command);
                  if(deathWait <= 0){
@@ -333,6 +356,7 @@ public class Game
             default:
              	 
             	System.out.println("Not a recognized command.");
+            	System.out.println("Need help? type help cmds and press enter");
            	 break;
         	}
         }
