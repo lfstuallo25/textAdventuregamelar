@@ -236,7 +236,7 @@ public class Game
                 
                  break;
             case "fix":
-            	System.out.print(currentLocation.getDanger());
+            	
                 fix(command);
                 if(deathWait <= 0){
                     try {
@@ -482,7 +482,7 @@ public class Game
                 	}
                     break;  
                 case "lystrosaurus":
-                	System.out.println("bruh");
+                	
                 	System.out.println("bruh");
                     break;  
                 default:
