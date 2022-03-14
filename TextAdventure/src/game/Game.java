@@ -532,7 +532,6 @@ public class Game
                     break;  
                 case "shallow lake":
                     System.out.println("Those small lizards look like they would be food for any large animal.");
-                    freezeCharge -= 1;     
                     break;
                 case "cliff edge":
                     System.out.println("Like all animals, these postosuchuses near the cliff are angry when they are hungry.");
@@ -540,7 +539,6 @@ public class Game
                     break;   
                 case "climb up":
                     System.out.println("The tree is old enough that a rapid change of energy could knock it down.");
-                    freezeCharge -= 1; 
                     break; 
                 case "volcano path":
                 	
@@ -570,7 +568,7 @@ public class Game
 
         } else{
             if (item.equals("freezegun")){
-                freezeCharge = 2;
+                freezeCharge = 3;
                 System.out.println("freeze gun grabbed and fully charged"); 
                 canFreeze = true;
             }
