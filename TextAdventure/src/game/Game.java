@@ -56,9 +56,9 @@ public class Game
         Location CliffTop = new Location(" This is the top of the cliff. Some calm postosuchuses are present, with a old tree on one edge of the cliff.", "At the top of the steep cliff, you see some postosuchuses, however these 3.5 meter long carnivore seem to have been calmed down by you. A very old and tall tree is at the edge of the cliff, and the postosuchus look at you funny when you go near it. ", true,false);
         Location Volcano = new Location("There it is, the volcano. However, a shiringasaurus is also right there as well.", "You've reached the main objective, to freeze this volcano so it doesen't go super in the future. Hope you brought your freezeray.", true, true);
         Location HeavyForest = new Location(" This is a small clearing, with a giant tree log blocking the path to the volcano. A lisowacia is also there, but sleeping.", "e", false, false);
-        Item freezeGun = new Item("your freeze gun", "long description");   
-        Item rockDepositChunk = new Item("large chunk of pumice rock that floats.", "long description");   
-        Item tools = new Item("a toolbox", "red toolbox with lots of cool stuff.");
+        Item freezeGun = new Item("your freeze gun", "a freeze gun with the power to freeze over a volcano.");   
+        Item rockDepositChunk = new Item("large chunk of pumice rock that floats. Needs to be cut with a tool in order to use it though", "long description");   
+        Item tools = new Item("a toolbox with the ability to fix your timemachine.", "red toolbox with lots of cool stuff.");
         Item lystrosaurus = new Item("the lystrosaurus you grabbed", "A small animal from the Trissaic period. It was one of the only animals to survive the Permian extinction.");  
         startingLocation.SetExit("shallow lake", shallowLake);
         startingLocation.SetExit("cliff edge", postCliff);
@@ -107,7 +107,7 @@ public class Game
         	System.out.println("Ok so the year is 2050 and a supervolcano is on the brink of erupting. luckily the government has a time machine, so they sent you back in time to destroy the volcano. HOWEVER, the time period is the Trissaic period, a strange time after trilobites and giant bugs but before dinosaurs.");
             System.out.println("Note: some items(freezegun) work differently in this game. Simply type a action the item will use, and it will do whatever task was needed for the room.");
             
-            System.out.println("Also, you die in this game by remaning in a dangerous area for more then 2 commands(including typos). It resets when you leave. Now onto the game.");
+            System.out.println("Also, you die in this game(re open the file via powershell when this happens) by remaning in a dangerous area for more then 2 commands(including typos). It resets when you leave. Now onto the game.");
             printInformation();
     		
     	}
@@ -161,7 +161,7 @@ public class Game
                 }catch(Exception e) {
                     System.out.println(e); 
                 }
-                System.out.println("Unfortunately you died, probably because you didn't notice the aggresive creature right next to you. Restart the game.");        
+                System.out.println("Unfortunately you died, probably because you didn't notice the aggressive creature right next to you. Restart the game.");        
                 gaming = false;
             }
             else if(currentLocation.getDanger() == true){
@@ -356,7 +356,7 @@ public class Game
             default:
              	 
             	System.out.println("Not a recognized command.");
-            	System.out.println("Need help? type help cmds and press enter");
+            	System.out.println("Need help? type help cmds or help location and press enter");
            	 break;
         	}
         }
@@ -474,7 +474,7 @@ public class Game
 
                 case "postosuchus":
                 	if(currentArea.equals("cliff edge") && HappyPostosuchusEvent == false) {
-                		 System.out.println("you feed the postosuchuses. they are happy now");
+                		 System.out.println("you feed the postosuchuses. they are happy now and you are able to go up the cliff.");
                 		 HappyPostosuchusEvent = true;
                 		 player.removeItem("lystrosaurus");
                 		 currentLocation.setDanger(false);	
@@ -539,6 +539,9 @@ public class Game
                     break;   
                 case "climb up":
                     System.out.println("The tree is old enough that a rapid change of energy could knock it down.");
+                    break; 
+                 case "use log":
+                    System.out.println("Go to the volcano.");
                     break; 
                 case "volcano path":
                 	
